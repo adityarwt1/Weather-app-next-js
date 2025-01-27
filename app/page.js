@@ -1,101 +1,104 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+// Import styles and React hooks
+import { useState, useEffect } from "react";
+
+export default function Page() {
+  useEffect(() => {
+    document.title = "Weather App - Check Your City's Weather";
+  }, []);
+  const [city, setCity] = useState(""); // State for user input
+  const [weatherData, setWeatherData] = useState(null); // State for weather data
+  const [error, setError] = useState(null); // State for errors
+
+  const fetchWeatherData = async (cityName) => {
+    const url = `https://open-weather13.p.rapidapi.com/city/${cityName}/EN`;
+    const options = {
+      method: "GET",
+      headers: {
+        "x-rapidapi-key": "bebbed6279msh577a1cc10608997p11d4d1jsna377b87d5bc2",
+        "x-rapidapi-host": "open-weather13.p.rapidapi.com",
+      },
+    };
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) throw new Error("City not found");
+      const result = await response.json();
+      setWeatherData(result); // Update state with weather data
+      setError(null); // Clear any previous errors
+    } catch (err) {
+      setError(err.message);
+      setWeatherData(null); // Clear previous data if there's an error
+    }
+  };
+
+  const handleSearch = () => {
+    if (city.trim()) {
+      fetchWeatherData(city.trim());
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-gradient-to-b from-blue-500 to-blue-900 text-white font-sans">
+      {/* Navigation Bar */}
+      <nav className="flex justify-between items-center py-4 px-8 bg-blue-600 shadow-lg">
+        <div className="text-4xl font-bold">Weather App</div>
+        <div className="flex space-x-4">
+          <input
+            type="text"
+            placeholder="Search your city"
+            className="p-2 rounded-lg text-black focus:ring-2 focus:ring-blue-400 w-72 bg-gray-200"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            autoFocus
+          />
+          <button
+            className="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg shadow-md"
+            onClick={handleSearch}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            Search
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </nav>
+
+      {/* Weather Result */}
+      <div className="flex justify-center items-center mt-10">
+        {error && (
+          <div className="text-red-400 text-lg bg-red-900 p-4 rounded-lg shadow-lg">
+            {error}
+          </div>
+        )}
+        {weatherData && (
+          <div className="bg-white text-black rounded-xl shadow-lg p-6 w-96">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              {weatherData.name}, {weatherData.sys.country}
+            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h3 className="text-lg font-semibold">Temperature:</h3>
+                <p className="text-xl">{weatherData.main.temp}°C</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Humidity:</h3>
+                <p className="text-xl">{weatherData.main.humidity}%</p>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold">Wind Speed:</h3>
+                <p className="text-xl">{weatherData.wind.speed} m/s</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Condition:</h3>
+                <p className="text-xl capitalize">
+                  {weatherData.weather[0].description}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
