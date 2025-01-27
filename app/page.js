@@ -7,6 +7,7 @@ export default function Page() {
   useEffect(() => {
     document.title = "Weather App - Check Your City's Weather";
   }, []);
+
   const [city, setCity] = useState(""); // State for user input
   const [weatherData, setWeatherData] = useState(null); // State for weather data
   const [error, setError] = useState(null); // State for errors
@@ -42,19 +43,19 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-500 to-blue-900 text-white font-sans">
       {/* Navigation Bar */}
-      <nav className="flex justify-between items-center py-4 px-8 bg-blue-600 shadow-lg">
-        <div className="text-4xl font-bold">Weather App</div>
-        <div className="flex space-x-4">
+      <nav className="flex flex-wrap justify-between items-center py-4 px-8 bg-blue-600 shadow-lg">
+        <div className="text-3xl md:text-4xl font-bold">Weather App</div>
+        <div className="flex flex-wrap space-x-4 mt-2 md:mt-0">
           <input
             type="text"
             placeholder="Search your city"
-            className="p-2 rounded-lg text-black focus:ring-2 focus:ring-blue-400 w-72 bg-gray-200"
+            className="p-2 rounded-lg text-black focus:ring-2 focus:ring-blue-400 w-full md:w-72 bg-gray-200"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             autoFocus
           />
           <button
-            className="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg shadow-md"
+            className="px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg shadow-md w-full md:w-auto"
             onClick={handleSearch}
           >
             Search
@@ -63,18 +64,18 @@ export default function Page() {
       </nav>
 
       {/* Weather Result */}
-      <div className="flex justify-center items-center mt-10">
+      <div className="flex justify-center items-center mt-10 px-4">
         {error && (
           <div className="text-red-400 text-lg bg-red-900 p-4 rounded-lg shadow-lg">
             {error}
           </div>
         )}
         {weatherData && (
-          <div className="bg-white text-black rounded-xl shadow-lg p-6 w-96">
+          <div className="bg-white text-black rounded-xl shadow-lg p-6 w-full max-w-lg">
             <h2 className="text-2xl font-bold mb-4 text-center">
               {weatherData.name}, {weatherData.sys.country}
             </h2>
-            <div className="flex justify-between items-center mb-4">
+            <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <h3 className="text-lg font-semibold">Temperature:</h3>
                 <p className="text-xl">{weatherData.main.temp}°C</p>
@@ -83,8 +84,6 @@ export default function Page() {
                 <h3 className="text-lg font-semibold">Humidity:</h3>
                 <p className="text-xl">{weatherData.main.humidity}%</p>
               </div>
-            </div>
-            <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-semibold">Wind Speed:</h3>
                 <p className="text-xl">{weatherData.wind.speed} m/s</p>
